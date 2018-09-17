@@ -35,6 +35,15 @@ module.exports = {
                         loader: 'less-loader'
                     }
                 ]
+            },
+            { 
+                test: /\.(woff|woff2|ttf|eot|svg)(\?.*)?$/, 
+                use: [
+                    {
+                        loader: 'file-loader', 
+                        options: { name: "files/[name].[hash].[ext]" } 
+                    }
+                ]
             }
         ]
     },

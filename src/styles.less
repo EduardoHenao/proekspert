@@ -1,1 +1,22 @@
+/* Font declarations */
+.font-declaration(@fileName, @relativePath: "assets/fonts/") {
+    font-style: normal;
+    font-weight: normal;
+    src: url("@{relativePath}@{fileName}.eot");
+    src: url("@{relativePath}@{fileName}.woff") format("woff"),
+        url("@{relativePath}@{fileName}.ttf") format("truetype"),
+        url("@{relativePath}@{fileName}.svg") format("svg");
+}
+
+@font-face {
+    font-family: "roboto";
+    .font-declaration("robotocondensed-regular-webfont");
+}
+
+@font-face {
+    font-family: "roboto_light";
+    .font-declaration("robotocondensed-light-webfont");
+}
+
+/* Structure */
 @import "./app/components/meteo.less";
