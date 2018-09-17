@@ -1,0 +1,52 @@
+.city-input {
+    position: relative;
+    height: 2em;
+    width: 80%;
+    left: 10%;
+    border-radius: 0.1em;
+    font-size: 1.1em;
+
+    input[type="text"] {
+        margin-top: 8em;
+        background-color: transparent;
+        border: none;
+        border-bottom: 0.05em solid @grey;
+        color: @grey;
+        box-sizing: border-box;
+        text-align: center;
+
+        &:focus {
+            outline: none;
+        }
+        &::placeholder,
+        &::-webkit-input-placeholder {
+            color: @grey;
+        }
+
+        &:focus::-webkit-input-placeholder {
+            color: @grey-light;
+        }
+
+        &:focus+.underline {
+            transform: scale(1);
+        }
+    }
+
+    .underline {
+        background-color: @grey-strong;
+        display: inline-block;
+        height: 0.1em;
+        width: 80%;
+        left: 10%;
+        position: relative;
+        top: -1em;
+        
+        -webkit-transition: all 0.1s linear;
+        -webkit-transition: all 0.1s linear;
+        transition: all 0.1s linear;
+
+        transform: scale(0, 1);
+        -ms-transform: scale(0, 1);
+        -webkit-transform: scale(0, 1);
+      }
+}
