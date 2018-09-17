@@ -7,4 +7,8 @@ export class MeteoStore {
         // TODO: recover cookie
         return "Tallinn";
     }
+
+    GetInfo = (cityName: string) : void => {
+        console.log("GetInfo('" + cityName + "')");
+    }
 }

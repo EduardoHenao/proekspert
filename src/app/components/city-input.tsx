@@ -2,6 +2,7 @@ import * as React from "react";
 import { MeteoStore } from '../stores/meteo-store'; 
 import { inject, observer } from "mobx-react";
 import { observable, action } from "mobx";
+import { IconSearch } from "./svg/icon-search";
 
 export interface CityInputProps {
     meteoStore?: MeteoStore;
@@ -22,10 +23,17 @@ export interface CityInputProps {
         this.text = event.target.value;
     }
 
+    handleClickIcon = () => {
+        if(this.text.length > 0) {
+            this.props.meteoStore!.GetInfo(this.text);
+        }
+    }
+
     render() {
         return <div className="city-input">
             <input type="text" name="city-input__input" className="city-input" placeholder={this.text} required-autocomplete="off" onKeyPress={e => this.handleKeyPress(e)} onChange={e => this.handleChange(e)}/>
             <span className="underline"></span>
+            <IconSearch className="city-input__icon" clickHandler={this.handleClickIcon}/>
         </div>
     }
 }
