@@ -8,11 +8,13 @@
         url("@{relativePath}@{fileName}.svg") format("svg");
 }
 
+@roboto: "roboto";
 @font-face {
     font-family: "roboto";
     .font-declaration("robotocondensed-regular-webfont");
 }
 
+@roboto-light: "roboto_light";
 @font-face {
     font-family: "roboto_light";
     .font-declaration("robotocondensed-light-webfont");
@@ -21,6 +23,10 @@
 /* Structure */
 @import "./app/components/meteo.less";
 @import "./app/components/city-input.less";
+@import "./app/components/city-meteo.less";
+@import "./app/components/city-header.less";
+@import "./app/components/city-and-back-button.less";
+@import "./app/components/units-switch.less";
 
 /* colors */
 @white: #ffffff;
@@ -34,7 +40,7 @@
 /* main page */
 .body {
     background-color: @saumon-strong;
-    font-family: "roboto";
+    font-family: @roboto;
     font-size: 16px;
     margin: 0;
 }

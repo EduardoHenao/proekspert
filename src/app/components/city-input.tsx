@@ -10,7 +10,8 @@ export interface CityInputProps {
 }
 
 @inject("meteoStore")
-@observer export class CityInput extends React.Component<CityInputProps> {
+@observer 
+export class CityInput extends React.Component<CityInputProps> {
     @observable text: string = "";
 
     @action handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -25,7 +26,7 @@ export interface CityInputProps {
 
     handleClickIcon = () => {
         if(this.text.length > 0) {
-            this.props.meteoStore!.GetInfo(this.text);
+            this.props.meteoStore!.LoadInfo(this.text);
         }
     }
 
