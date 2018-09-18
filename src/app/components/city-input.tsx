@@ -15,7 +15,7 @@ export interface CityInputProps {
 
     @action handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if(event.key === 'Enter') {
-            //here call the store and send the text
+            this.handleClickIcon();
         }
     }
 
