@@ -60,4 +60,8 @@ export class MeteoStore {
     @action GetCityName(): string {
         return this.modelWeather.name;
     }
+
+    @action GetIconCode(): string {
+        return "01d";
+    }
 }

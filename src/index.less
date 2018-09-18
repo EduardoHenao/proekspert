@@ -10,14 +10,20 @@
 
 @roboto: "roboto";
 @font-face {
-    font-family: "roboto";
+    font-family: @roboto;
     .font-declaration("robotocondensed-regular-webfont");
 }
 
 @roboto-light: "roboto_light";
 @font-face {
-    font-family: "roboto_light";
+    font-family: @roboto-light;
     .font-declaration("robotocondensed-light-webfont");
+}
+
+@weather: "weather";
+@font-face {
+    font-family: @weather;
+    .font-declaration("weathericons-regular-webfont")
 }
 
 /* Structure */
@@ -27,6 +33,7 @@
 @import "./app/components/city-header.less";
 @import "./app/components/city-and-back-button.less";
 @import "./app/components/units-switch.less";
+@import "./app/components/weather-icon.less";
 
 /* colors */
 @white: #ffffff;

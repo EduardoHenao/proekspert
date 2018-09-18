@@ -15,9 +15,9 @@ export class UnitsSwitch extends React.Component<UnitsSwitchProps> {
 
     render() {
         return <div className="units-switch" onClick={this.handleClick}>
-            <div className="units-switch__container" onClick={this.handleClick}></div>
-            <div className={this.props.meteoStore!.isMetric ? " units-switch__slider left" : " units-switch__slider right"} onClick={this.handleClick}>
-                <div className="units-switch__slider--unit" onClick={this.handleClick}></div>
+            <div className="units-switch__container"></div>
+            <div className={this.props.meteoStore!.isMetric ? " units-switch__slider left" : " units-switch__slider right"}>
+                <div className="units-switch__slider--unit"></div>
             </div>
             <div className={this.props.meteoStore!.isMetric ? "units-switch__c" : "units-switch__f"}>{this.props.meteoStore!.GetUnitsLabel}</div>
         </div>;
