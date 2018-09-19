@@ -1,3 +1,4 @@
+import { CookieService } from './../services/cookie-service';
 import { ModelForecastDayAnswer } from './../models/model-forecast-week-answer';
 import { observable, action, computed } from 'mobx';
 import { JsonService } from '../services/json-service';
@@ -7,6 +8,7 @@ import { ModelDayForecast } from '../models/model-day-forecast';
 
 export class MeteoStore {
     jsonService: JsonService;
+    cookieService: CookieService;
     // the model should stay inside the store, all info is exposed via methods
     @observable private modelWeather: ModelWeatherAnswer | null; 
     @observable private modelForecastDay: ModelForecastDayAnswer | null;
@@ -22,6 +24,7 @@ export class MeteoStore {
     constructor()
     {
         this.jsonService = new JsonService();
+        this.cookieService = new CookieService();
         this.jsonService.configure(this.baseUrl);
         this.modelWeather = null;
         this.modelForecastDay = null;
