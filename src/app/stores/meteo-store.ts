@@ -1,11 +1,15 @@
+import { ModelForecastDayAnswer } from './../models/model-forecast-week-answer';
 import { observable, action, computed } from 'mobx';
 import { JsonService } from '../services/json-service';
 import { ModelWeatherRequest } from '../models/model-weather';
 import { ModelWeatherAnswer } from '../models/model-weather-answer';
+import { ModelDayForecast } from '../models/model-day-forecast';
 
 export class MeteoStore {
     jsonService: JsonService;
-    @observable private modelWeather: ModelWeatherAnswer | null; // the model should stay inside the store, all info is exposed via methods
+    // the model should stay inside the store, all info is exposed via methods
+    @observable private modelWeather: ModelWeatherAnswer | null; 
+    @observable private modelForecastDay: ModelForecastDayAnswer | null;
     @observable isMetric: boolean;
 
     // url constants
@@ -13,12 +17,15 @@ export class MeteoStore {
     private baseUrl: string = "http://api.openweathermap.org/";
     private key: string = "c08ebd64eae72d114b42b2cbb8b6aa77";
     private method_weather : string = "data/2.5/weather";
+    private method_forecast_day : string = "data/2.5/forecast";
+    private day_forecast_count : number = 4;
 
     constructor()
     {
         this.jsonService = new JsonService();
         this.jsonService.configure(this.baseUrl);
         this.modelWeather = null;
+        this.modelForecastDay = null;
         this.isMetric = true;
     }
 
@@ -29,16 +36,25 @@ export class MeteoStore {
 
     @computed get isInfoLoaded(): boolean {
         var answer = false;
-        if(this.modelWeather !== null) answer = true;
+        if(this.modelWeather !== null && this.modelForecastDay !== null) answer = true;
         return answer;
     }
 
     @action async LoadInfo (cityName: string) {
-        console.log(`LoadInfo(${cityName})`)
-        const { status, value } = await this.jsonService.fetchAsJson<ModelWeatherAnswer>("GET", this.method_weather, undefined, new ModelWeatherRequest(cityName, this.key, this.isMetric ? "metric" : "imperial"));
-        if (status === 200) {
-            this.modelWeather = value;
-            console.log(value);
+        {
+            var { status, value } = await this.jsonService.fetchAsJson<ModelWeatherAnswer>("GET", this.method_weather, undefined, new ModelWeatherRequest(cityName, this.key, "metric"));
+            if (status === 200) {
+                this.modelWeather = value;
+                console.log(value);
+            }
+        }
+
+        {
+            const { status, value } = await this.jsonService.fetchAsJson<ModelForecastDayAnswer>("GET", this.method_forecast_day, undefined, new ModelWeatherRequest(cityName, this.key, "metric"));
+            if (status === 200) {
+                this.modelForecastDay = value;
+                console.log(value);
+            }
         }
     }
 
@@ -50,6 +66,7 @@ export class MeteoStore {
     @action UnloadInfo() {
         console.log(`UnloadInfo()`);
         this.modelWeather = null;
+        this.modelForecastDay = null;
     }
 
     @action SwitchUnits() {
@@ -66,6 +83,41 @@ export class MeteoStore {
         return this.modelWeather.weather[0].icon;
     }
 
+    @action GetWeatherName(): string {
+        if (this.modelWeather.weather.length === 0) return ""; // a non existent meteo data, then no value maps to the default icon
+        var weatherName = this.modelWeather.weather[0].description;
+        return `${weatherName.charAt(0).toUpperCase()}${weatherName.slice(1)}`;
+    }
+
+    @action GetTemperature(): string {
+        return `${Math.ceil(this.modelWeather.main.temp).toString()} ${this.GetUnitsLabel}`;
+    }
+
+    // Methods for ModelForecastDayAnswer
+    @action GetDayForecast(): ModelDayForecast[] {
+        var answer: ModelDayForecast[] = [];
+        if(this.modelForecastDay) { // array musnt be null
+            var count = 0;
+            for (const data of this.modelForecastDay.list) {
+                answer.push(new ModelDayForecast(`${Math.ceil(data.main.temp).toString()} ${this.GetUnitsLabel}`, this.ConvertDateToSegmentOfDay(data.dt_txt)));
+                count++;
+                if(count == this.day_forecast_count) break;
+            }
+        }
+        return answer;
+    }
+
+    private ConvertDateToSegmentOfDay(date: string): string {
+        //format is  "2018-09-19 21:00:00"
+        var dateAndHourText = date.split(" ", 2);
+        var hourText = dateAndHourText[1].split(":", 1);
+        var h = Number(hourText[0]);
+        if ( h >= 0 && h < 6 ) return "Night";
+        else if ( h >= 6 && h < 12 ) return "Morning";
+        else if ( h >= 12 && h < 18 ) return "Day";
+        else return "Evening";
+    }
+ 
     // this maps the codes from json to our icon less mapping the meteo font icons "weather-icons-map"
     @action getClassFromWeatherCode(weatherCode: string): string{
         switch (weatherCode) {

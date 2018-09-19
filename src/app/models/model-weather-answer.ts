@@ -40,7 +40,7 @@ export class ModelWeatherAnswer {
     coord: ModelWeatherCoord;
     weather: ModelWeatherWeather[];
     base: string;
-    maing: ModelWeatherMain;
+    main: ModelWeatherMain;
     visibility: number;
     wind: ModelWeatherWind;
     clouds: ModelWeatherClouds;

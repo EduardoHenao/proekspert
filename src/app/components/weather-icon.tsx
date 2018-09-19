@@ -16,8 +16,6 @@ export class WeatherIcon extends React.Component<WeatherIconProps> {
     }
 
     render() {
-        return <div className="weather-icon">
-            <div className={this.getClass()}></div>
-        </div>;
+        return <div className={this.getClass()}></div>
     }
 }
