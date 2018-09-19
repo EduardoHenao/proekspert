@@ -3,15 +3,14 @@ import { observer, inject } from "mobx-react";
 import { CityHeader } from "./city-header";
 import { MeteoStore } from "../stores/meteo-store";
 import { DateInfo } from "./date-info";
-import { WeatherName } from "./weather-name";
 
-export interface CityMeteoProps {
+export interface WeatherNameProps {
     meteoStore?: MeteoStore;
 }
 
 @inject("meteoStore")
 @observer
-export class CityMeteo extends React.Component<CityMeteoProps> {
+export class WeatherName extends React.Component<WeatherNameProps> {
     render() {
         return <div className="city-meteo">
             <CityHeader></CityHeader>

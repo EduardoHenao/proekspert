@@ -90,4 +90,39 @@ export class MeteoStore {
             default:  return "icon-na";
         }
     }
+
+    //date related methods
+    GetDayOfWeek(): string {
+        const days: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        const date = new Date();
+        return days[date.getDay()];
+    }
+
+    GetMonthOfYear(): string {
+        var months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ];
+        const date = new Date();
+        return months[date.getMonth()]
+    }
+
+    GetYear(): string {
+        var date = new Date();
+        return date.getFullYear().toString();
+    }
+
+    GetOrdinalDate(): string {
+        var date = new Date();
+        var dayNumber = date.getDate();
+        var ending = "";
+        switch (dayNumber) {
+            case 31:
+            case 21:
+            case 1: ending = "st";
+            case 22:
+            case 2: ending = "nd";
+            case 23:
+            case 3: ending = "rd";
+            default: ending = "th";
+        }
+        return `${dayNumber}${ending}`;
+    }
 }
