@@ -18,7 +18,6 @@ export class MeteoStore {
     private key: string = "c08ebd64eae72d114b42b2cbb8b6aa77";
     private method_weather : string = "data/2.5/weather";
     private method_forecast_day : string = "data/2.5/forecast";
-    private day_forecast_count : number = 4;
 
     constructor()
     {
@@ -94,14 +93,34 @@ export class MeteoStore {
     }
 
     // Methods for ModelForecastDayAnswer
+
+    //the forecast is populated with segments of 3 hours, contaning the following 120 hours (5 days, 40 segments)
+    //for the week forecast we divide the day in 4 pieces, which is 2 segments per piece
+    // so here we transform the pieces [0] [2] [4] [6]
     @action GetDayForecast(): ModelDayForecast[] {
         var answer: ModelDayForecast[] = [];
         if(this.modelForecastDay) { // array musnt be null
             var count = 0;
             for (const data of this.modelForecastDay.list) {
-                answer.push(new ModelDayForecast(`${Math.ceil(data.main.temp).toString()} ${this.GetUnitsLabel}`, this.ConvertDateToSegmentOfDay(data.dt_txt)));
+                if(count % 2 == 0) {
+                    answer.push(new ModelDayForecast(count, `${Math.ceil(data.main.temp).toString()} ${this.GetUnitsLabel}`, this.ConvertDateToSegmentOfDay(data.dt_txt), ""));
+                }
                 count++;
-                if(count == this.day_forecast_count) break;
+                if(count > 6) break;
+            }
+        }
+        return answer;
+    }
+
+    @action GetWeekForecast(): ModelDayForecast[] {
+        var answer: ModelDayForecast[] = [];
+        if(this.modelForecastDay) { // array musnt be null
+            var count = 0;
+            for (const data of this.modelForecastDay.list) {
+                if(this.IsNoon(data.dt_txt)) {
+                    answer.push(new ModelDayForecast(count, `${Math.ceil(data.main.temp).toString()} ${this.GetUnitsLabel}`, this.ConverToDayName(data.dt_txt), data.weather[0].icon));
+                }
+                count++;
             }
         }
         return answer;
@@ -116,6 +135,26 @@ export class MeteoStore {
         else if ( h >= 6 && h < 12 ) return "Morning";
         else if ( h >= 12 && h < 18 ) return "Day";
         else return "Evening";
+    }
+
+    private ConverToDayName(dateString: string): string {
+        //format is  "2018-09-19 21:00:00"
+        var dateAndHourText = dateString.split(" ", 2);
+        var date = new Date(`${dateAndHourText[0]}T${dateAndHourText[1]}`);
+        return this.ConvertDateToDayName(date);
+    }
+
+    private ConvertDateToDayName(date: Date): string {
+        const days: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        return days[date.getDay()];
+    }
+
+    private IsNoon(dateString: string): boolean {
+        //format is  "2018-09-19 21:00:00"
+        var dateAndHourText = dateString.split(" ", 2);
+        var hourText = dateAndHourText[1].split(":", 1);
+        var h = Number(hourText[0]);
+        return h === 12;
     }
  
     // this maps the codes from json to our icon less mapping the meteo font icons "weather-icons-map"

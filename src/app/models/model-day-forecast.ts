@@ -1,9 +1,14 @@
+//this model is used either by the intra day forecast or the week forecast
 export class ModelDayForecast {
     temp: string;
-    segmentOfDay: string;
+    name: string;
+    iconCode: string;
+    id: number;
 
-    constructor(temp: string, segmentOfDay: string) {
+    constructor(id: number, temp: string, segmentOfDay: string, iconCode: string) {
+        this.id = id;
         this.temp = temp;
-        this.segmentOfDay = segmentOfDay;
+        this.name = segmentOfDay;
+        this.iconCode = iconCode;
     }
 }

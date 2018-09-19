@@ -12,7 +12,7 @@ export interface WeatherDayForecastProps {
 export class WeatherDayForecast extends React.Component<WeatherDayForecastProps> {
     render() {
         return <div className="weather-day-forecast">
-            {this.props.meteoStore!.GetDayForecast().map(x => <WeatherDayForecastSegment daySegment={x.segmentOfDay} temp={x.temp}></WeatherDayForecastSegment> )}
+            {this.props.meteoStore!.GetDayForecast().map(x => <WeatherDayForecastSegment key={x.id} daySegment={x.name} temp={x.temp}></WeatherDayForecastSegment> )}
         </div>;
     }
 }

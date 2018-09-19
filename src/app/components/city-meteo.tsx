@@ -5,6 +5,7 @@ import { MeteoStore } from "../stores/meteo-store";
 import { DateInfo } from "./date-info";
 import { WeatherName } from "./weather-name";
 import { WeatherDetails } from "./weather-details";
+import { WeatherWeeklyForecast } from "./weather-weekly-forecast";
 
 export interface CityMeteoProps {
     meteoStore?: MeteoStore;
@@ -19,6 +20,7 @@ export class CityMeteo extends React.Component<CityMeteoProps> {
             <DateInfo></DateInfo>
             <WeatherName></WeatherName>
             <WeatherDetails></WeatherDetails>
+            <WeatherWeeklyForecast></WeatherWeeklyForecast>
         </div>;
     }
 }
