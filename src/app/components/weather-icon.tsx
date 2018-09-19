@@ -10,9 +10,14 @@ export interface WeatherIconProps {
 @inject("meteoStore")
 @observer
 export class WeatherIcon extends React.Component<WeatherIconProps> {
+
+    private getClass(): string {
+        return this.props.meteoStore!.getClassFromWeatherCode(this.props.weatherCode);
+    }
+
     render() {
         return <div className="weather-icon">
-        {https://openweathermap.org/weather-conditions   search hoto ::before in perf}
+            <div className={this.getClass()}></div>
         </div>;
     }
 }

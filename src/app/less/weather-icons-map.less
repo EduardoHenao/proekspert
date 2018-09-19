@@ -1,0 +1,88 @@
+@import "./icon-variables/variables-beaufort.less";
+@import "./icon-variables/variables-day.less";
+@import "./icon-variables/variables-direction.less";
+@import "./icon-variables/variables-misc.less";
+@import "./icon-variables/variables-moon.less";
+@import "./icon-variables/variables-neutral.less";
+@import "./icon-variables/variables-night.less";
+@import "./icon-variables/variables-time.less";
+@import "./icon-variables/variables-wind-names.less";
+
+//01d
+.icon-day-sunny:before {
+    content: @day-sunny;
+}
+
+//01n
+.icon-night-clear:before {
+    content: @night-clear;
+}
+
+//02d
+.icon-day-cloudy:before {
+    content: @day-cloudy;
+}
+
+//02n
+.icon-night-alt-cloudy:before {
+    content: @night-alt-cloudy;
+}
+
+//03d 03n
+.icon-cloud:before {
+    content: @cloud;
+}
+
+//04d //04n
+.icon-cloudy:before {
+    content: @cloudy;
+}
+
+//09d //09n
+.icon-rain:before {
+    content: @rain;
+}
+
+//10d
+.icon-day-rain:before {
+    content: @day-rain;
+}
+
+//10n
+.icon-night-alt-rain:before {
+    content: @night-alt-rain;
+}
+
+//11d //11n
+.icon-thunderstorm:before {
+    content: @thunderstorm;
+}
+
+//13d //13n
+.icon-snow:before {
+    content: @snow;
+}
+
+//50d //50n
+.icon-windy:before {
+    content: @windy;
+}
+
+//no map
+//50d //50n
+.icon-na:before {
+    content: @na;
+}
+
+[class^="icon-"],
+[class*="icon-"] {
+    font-family: @weather;
+    font-weight: bold;
+    font-style: bold;
+    font-variant: normal;
+    line-height: 1;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    speak: none;
+}
