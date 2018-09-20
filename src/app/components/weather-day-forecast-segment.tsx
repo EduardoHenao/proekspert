@@ -1,11 +1,12 @@
 import * as React from "react";
 import { observer, inject } from "mobx-react";
 import { MeteoStore } from "../stores/meteo-store";
+import { Temperature } from "./temperature";
 
 export interface WeatherDayForecastSegmentProps {
     meteoStore?: MeteoStore;
     daySegment: string;
-    temp: string;
+    temp: number;
 }
 
 @inject("meteoStore")
@@ -14,7 +15,9 @@ export class WeatherDayForecastSegment extends React.Component<WeatherDayForecas
     render() {
         return <div className="weather-day-forecast-segment">
             <div className="weather-day-forecast-segment__day-segment">{this.props.daySegment}</div>
-            <div className="weather-day-forecast-segment__temp">{this.props.temp}</div>
+            <div className="weather-day-forecast-segment__temp">
+                <Temperature tempInMetric={this.props.temp}></Temperature>
+            </div>
         </div>;
     }
 }

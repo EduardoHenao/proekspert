@@ -2,11 +2,12 @@ import * as React from "react";
 import { observer, inject } from "mobx-react";
 import { MeteoStore } from "../stores/meteo-store";
 import { WeatherIcon } from "./weather-icon";
+import { Temperature } from "./temperature";
 
 export interface WeatherWeeklyForecastSegmentProps {
     meteoStore?: MeteoStore;
     dayName: string;
-    temp: string;
+    temp: number;
     iconCode: string;
 }
 
@@ -19,7 +20,9 @@ export class WeatherWeeklyForecastSegment extends React.Component<WeatherWeeklyF
             <div className="weather-weekly-forecast-segment__icon">
                 <WeatherIcon weatherCode={this.props.iconCode}></WeatherIcon>
             </div>
-            <div className="weather-weekly-forecast-segment__temperature">{this.props.temp}</div>
+            <div className="weather-weekly-forecast-segment__temperature">
+                <Temperature tempInMetric={this.props.temp}></Temperature>
+            </div>
         </div>;
     }
 }

@@ -13,6 +13,7 @@ export class MeteoStore {
     @observable private modelWeather: ModelWeatherAnswer | null; 
     @observable private modelForecastDay: ModelForecastDayAnswer | null;
     @observable isMetric: boolean;
+    @observable loadedCity: string;
 
     // url constants
     // example: 'http://api.openweathermap.org/data/2.5/weather?q=London&appid=c08ebd64eae72d114b42b2cbb8b6aa77';
@@ -29,6 +30,7 @@ export class MeteoStore {
         this.modelWeather = null;
         this.modelForecastDay = null;
         this.isMetric = true;
+        this.loadedCity = null;
     }
 
     GetCity = () : string | null => {
@@ -58,6 +60,7 @@ export class MeteoStore {
                 console.log(value);
             }
         }
+        this.loadedCity = cityName;
     }
 
     get GetUnitsLabel(): string {
@@ -91,8 +94,8 @@ export class MeteoStore {
         return `${weatherName.charAt(0).toUpperCase()}${weatherName.slice(1)}`;
     }
 
-    @action GetTemperature(): string {
-        return `${Math.ceil(this.modelWeather.main.temp).toString()} ${this.GetUnitsLabel}`;
+    @action GetTemperature(): number {
+        return this.modelWeather.main.temp;
     }
 
     // Methods for ModelForecastDayAnswer
@@ -106,7 +109,7 @@ export class MeteoStore {
             var count = 0;
             for (const data of this.modelForecastDay.list) {
                 if(count % 2 == 0) {
-                    answer.push(new ModelDayForecast(count, `${Math.ceil(data.main.temp).toString()} ${this.GetUnitsLabel}`, this.ConvertDateToSegmentOfDay(data.dt_txt), ""));
+                    answer.push(new ModelDayForecast(count, data.main.temp, this.ConvertDateToSegmentOfDay(data.dt_txt), ""));
                 }
                 count++;
                 if(count > 6) break;
@@ -121,7 +124,7 @@ export class MeteoStore {
             var count = 0;
             for (const data of this.modelForecastDay.list) {
                 if(this.IsNoon(data.dt_txt)) {
-                    answer.push(new ModelDayForecast(count, `${Math.ceil(data.main.temp).toString()} ${this.GetUnitsLabel}`, this.ConverToDayName(data.dt_txt), data.weather[0].icon));
+                    answer.push(new ModelDayForecast(count, data.main.temp, this.ConverToDayName(data.dt_txt), data.weather[0].icon));
                 }
                 count++;
             }
