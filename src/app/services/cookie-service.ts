@@ -1,6 +1,6 @@
 import * as Cookies from "js-cookie";
 
-export class CookieService { //implements ICookieService {
+export class CookieService {
 
     public static keyMeteo: string = "meteoKey";
     public static keyForecast: string = "forecastKey";

@@ -30,11 +30,22 @@ export class CityInput extends React.Component<CityInputProps> {
         }
     }
 
+    HandleGeoLocationLink = () => {
+        this.props.meteoStore!.LoadFromGeoCoords();
+    }
+
     render() {
         return <div className="city-input">
             <input type="text" name="city-input__input" className="city-input" placeholder={this.text} required-autocomplete="off" onKeyPress={e => this.handleKeyPress(e)} onChange={e => this.handleChange(e)}/>
             <span className="underline"></span>
             <IconSearch className="city-input__icon" clickHandler={this.handleClickIcon}/>
+            <div className="city-input__or">
+                <div>or</div>
+            </div>
+            <div className="city-input__current-location-container">
+                <div className="city-input__current-location-container__left">use my </div>
+                <div className="city-input__current-location-container__right" onClick={this.HandleGeoLocationLink}>current location</div>
+            </div>
         </div>
     }
 }

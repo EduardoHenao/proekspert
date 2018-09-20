@@ -5,6 +5,7 @@ import { JsonService } from '../services/json-service';
 import { ModelWeatherRequest } from '../models/model-weather';
 import { ModelWeatherAnswer } from '../models/model-weather-answer';
 import { ModelDayForecast } from '../models/model-day-forecast';
+import { GeoLocationService } from '../services/geolocation-service';
 
 export class MeteoStore {
     jsonService: JsonService;
@@ -16,7 +17,7 @@ export class MeteoStore {
 
     // url constants
     // example: 'http://api.openweathermap.org/data/2.5/weather?q=London&appid=c08ebd64eae72d114b42b2cbb8b6aa77';
-    private baseUrl: string = "http://api.openweathermap.org/";
+    private baseUrl: string = "https://api.openweathermap.org/";
     private key: string = "c08ebd64eae72d114b42b2cbb8b6aa77";
     private method_weather : string = "data/2.5/weather";
     private method_forecast_day : string = "data/2.5/forecast";
@@ -60,7 +61,6 @@ export class MeteoStore {
                 var trimmedMeteo = ModelWeatherAnswer.Trim(value);
                 this.modelWeather = trimmedMeteo;
                 this.cookieService.setCookie(CookieService.keyMeteo, this.modelWeather);
-                console.log(value);
             }
         }
 
@@ -70,7 +70,6 @@ export class MeteoStore {
                 var trimmedForecast = ModelForecastDayAnswer.Trim(value);
                 this.modelForecastDay = trimmedForecast;
                 this.cookieService.setCookie(CookieService.keyForecast, this.modelForecastDay);
-                console.log(value);
             }
         }
     }
@@ -88,6 +87,12 @@ export class MeteoStore {
 
     @action SwitchUnits() {
         this.isMetric = !this.isMetric;
+    }
+
+    @action LoadFromGeoCoords() {
+        var geo = new GeoLocationService();
+        setInterval(geo.GetLatitude(), 10000);
+        console.log(geo.pos);
     }
 
     //methods for ModelWeatherAnswer
