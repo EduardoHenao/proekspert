@@ -13,7 +13,6 @@ export class MeteoStore {
     @observable private modelWeather: ModelWeatherAnswer | null; 
     @observable private modelForecastDay: ModelForecastDayAnswer | null;
     @observable isMetric: boolean;
-    @observable loadedCity: string;
 
     // url constants
     // example: 'http://api.openweathermap.org/data/2.5/weather?q=London&appid=c08ebd64eae72d114b42b2cbb8b6aa77';
@@ -30,7 +29,17 @@ export class MeteoStore {
         this.modelWeather = null;
         this.modelForecastDay = null;
         this.isMetric = true;
-        this.loadedCity = null;
+
+        this.RestoreFromCookies();
+    }
+
+    private RestoreFromCookies() {
+        var storedWeather = this.cookieService.getCookie<ModelWeatherAnswer>(CookieService.keyMeteo);
+        var storedForecast = this.cookieService.getCookie<ModelForecastDayAnswer>(CookieService.keyForecast);
+        if (!storedWeather !== undefined && storedForecast !== undefined) {
+            this.modelWeather = storedWeather;
+            this.modelForecastDay = storedForecast;
+        }
     }
 
     GetCity = () : string | null => {
@@ -48,7 +57,9 @@ export class MeteoStore {
         {
             var { status, value } = await this.jsonService.fetchAsJson<ModelWeatherAnswer>("GET", this.method_weather, undefined, new ModelWeatherRequest(cityName, this.key, "metric"));
             if (status === 200) {
-                this.modelWeather = value;
+                var trimmedMeteo = ModelWeatherAnswer.Trim(value);
+                this.modelWeather = trimmedMeteo;
+                this.cookieService.setCookie(CookieService.keyMeteo, this.modelWeather);
                 console.log(value);
             }
         }
@@ -56,11 +67,12 @@ export class MeteoStore {
         {
             const { status, value } = await this.jsonService.fetchAsJson<ModelForecastDayAnswer>("GET", this.method_forecast_day, undefined, new ModelWeatherRequest(cityName, this.key, "metric"));
             if (status === 200) {
-                this.modelForecastDay = value;
+                var trimmedForecast = ModelForecastDayAnswer.Trim(value);
+                this.modelForecastDay = trimmedForecast;
+                this.cookieService.setCookie(CookieService.keyForecast, this.modelForecastDay);
                 console.log(value);
             }
         }
-        this.loadedCity = cityName;
     }
 
     get GetUnitsLabel(): string {
@@ -123,7 +135,7 @@ export class MeteoStore {
         if(this.modelForecastDay) { // array musnt be null
             var count = 0;
             for (const data of this.modelForecastDay.list) {
-                if(this.IsNoon(data.dt_txt)) {
+                if(ModelForecastDayAnswer.IsNoon(data.dt_txt)) {
                     answer.push(new ModelDayForecast(count, data.main.temp, this.ConverToDayName(data.dt_txt), data.weather[0].icon));
                 }
                 count++;
@@ -155,13 +167,7 @@ export class MeteoStore {
         return days[date.getDay()];
     }
 
-    private IsNoon(dateString: string): boolean {
-        //format is  "2018-09-19 21:00:00"
-        var dateAndHourText = dateString.split(" ", 2);
-        var hourText = dateAndHourText[1].split(":", 1);
-        var h = Number(hourText[0]);
-        return h === 12;
-    }
+    
  
     // this maps the codes from json to our icon less mapping the meteo font icons "weather-icons-map"
     @action getClassFromWeatherCode(weatherCode: string): string{

@@ -1,52 +1,38 @@
-export class ModelWeatherCoord {
-    lon: number;
-    lat: number;
-};
-
 export class ModelWeatherWeather { 
-    id: number;
-    main: string;
     description: string;
     icon: string;
+
+    constructor(description: string, icon: string) {
+        this.description = description;
+        this.icon = icon;
+    }
 }
 
 export class ModelWeatherMain {
     temp: number;
-    pressure: number;
-    humidity: number;
-    temp_min: number;
-    temp_max: number;
-}
-
-export class ModelWeatherWind {
-    speed: number;
-    deg: number;
-}
-
-export class ModelWeatherClouds {
-    all: number;
-}
-
-export class ModelWeatherSys {
-    type: number;
-    id: number;
-    message: number;
-    country: string;
-    sunrise: number;
-    sunset: number;
+    
+    constructor(temp: number) {
+        this.temp = temp;
+    }
 }
 
 export class ModelWeatherAnswer {
-    coord: ModelWeatherCoord;
     weather: ModelWeatherWeather[];
-    base: string;
     main: ModelWeatherMain;
-    visibility: number;
-    wind: ModelWeatherWind;
-    clouds: ModelWeatherClouds;
-    dt: number;
-    sys: ModelWeatherSys;
-    id: number;
     name: string;
-    cod: number;
+
+    constructor(main: ModelWeatherMain, name: string) {
+        this.main = main;
+        this.name = name;
+        this.weather = [];
+    }
+
+    static Trim(model: ModelWeatherAnswer): ModelWeatherAnswer {
+        var answer = new ModelWeatherAnswer(new ModelWeatherMain(model.main.temp), model.name);
+        for (const weatherMember of model.weather) {
+            answer.weather.push(new ModelWeatherWeather(weatherMember.description, weatherMember.icon));
+        }
+        return answer;
+    }
 };
+
