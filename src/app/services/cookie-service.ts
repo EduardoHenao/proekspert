@@ -1,3 +1,5 @@
+// the small service containing the methods to manipulate cookies.
+// please note that we use the "js-cookie" library
 import * as Cookies from "js-cookie";
 
 export class CookieService {

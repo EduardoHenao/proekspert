@@ -8,6 +8,7 @@ export interface MeteoProps {
     meteoStore?: MeteoStore;
 }
 
+// this class represents the root component
 @inject("meteoStore")
 @observer
 export class Meteo extends React.Component<MeteoProps> {
@@ -16,7 +17,7 @@ export class Meteo extends React.Component<MeteoProps> {
 
         return <div className="meteo">
         {/* if no info is loaded then load the start screen */}
-        { !isInfoLoaded && <CityInput cityName={this.props.meteoStore!.GetCity()}></CityInput>}
+        { !isInfoLoaded && <CityInput></CityInput>}
         {/* else load the elements to show */}
         { isInfoLoaded && <CityMeteo></CityMeteo>}
         </div>;

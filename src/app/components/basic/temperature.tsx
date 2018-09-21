@@ -1,6 +1,6 @@
 import * as React from "react";
 import { observer, inject } from "mobx-react";
-import { MeteoStore } from "../stores/meteo-store";
+import { MeteoStore } from "../../stores/meteo-store";
 import { computed } from "mobx";
 
 export interface TemperatureProps {

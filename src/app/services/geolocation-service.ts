@@ -1,3 +1,4 @@
+// this small service is used to recover the geolocation data from the browser
 import { MeteoStore } from "../stores/meteo-store";
 
 export class GeoLocationService {

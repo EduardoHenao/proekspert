@@ -1,3 +1,4 @@
+// this small json service is a generic service used to contact API providers
 export type Method =  "POST" | "GET" | "PUT" | "DELETE" | "PATCH";
 
 export interface IJsonService {
@@ -22,7 +23,6 @@ export class JsonService implements IJsonService {
     fetch(method: Method, path: string, data: any, queryParameters: any) {
         var request:RequestInit = {
             method: method,
-            // credentials: 'same-origin',
             headers: this._headers
         };
         if (data){

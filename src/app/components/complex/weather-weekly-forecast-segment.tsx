@@ -1,9 +1,11 @@
 import * as React from "react";
 import { observer, inject } from "mobx-react";
-import { MeteoStore } from "../stores/meteo-store";
-import { WeatherIcon } from "./weather-icon";
-import { Temperature } from "./temperature";
+import { MeteoStore } from "../../stores/meteo-store";
+import { WeatherIcon } from "../basic/weather-icon";
+import { Temperature } from "../basic/temperature";
 
+// this class represents 1 of the intra day forecasts
+// to the mid left portion of the screen
 export interface WeatherWeeklyForecastSegmentProps {
     meteoStore?: MeteoStore;
     dayName: string;
@@ -11,6 +13,8 @@ export interface WeatherWeeklyForecastSegmentProps {
     iconCode: string;
 }
 
+// this class represents a block in the bottom of the screen containing (CityMeteo screen)
+// the day name, temperature, and icon for each forecasted day.
 @inject("meteoStore")
 @observer
 export class WeatherWeeklyForecastSegment extends React.Component<WeatherWeeklyForecastSegmentProps> {

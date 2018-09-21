@@ -1,5 +1,5 @@
 import * as React from "react";
-import { MeteoStore } from '../stores/meteo-store';
+import { MeteoStore } from '../../stores/meteo-store';
 import { inject, observer } from "mobx-react";
 
 export interface WeatherIconProps {
@@ -7,6 +7,8 @@ export interface WeatherIconProps {
     weatherCode: string;
 }
 
+// this class is used to bridge the api weather icon to its correct font icon
+// please refer to the internal mapper inside getClassFromWeatherCode
 @inject("meteoStore")
 @observer
 export class WeatherIcon extends React.Component<WeatherIconProps> {

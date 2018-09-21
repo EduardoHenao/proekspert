@@ -6,9 +6,10 @@ import { IconSearch } from "./svg/icon-search";
 
 export interface CityInputProps {
     meteoStore?: MeteoStore;
-    cityName: string | null;
 }
 
+// this class represents the 1st screen, where the user eithers enters the city name or uses the geolocation link
+// the other screen of the project is called CityMeteo
 @inject("meteoStore")
 @observer 
 export class CityInput extends React.Component<CityInputProps> {

@@ -10,8 +10,10 @@ import { ModelWeatherBaseRequest } from '../models/model-weather-base-request';
 import { ModelWeatherByGeocoordsRequest } from '../models/model-weather-by-geocoords-request';
 
 export class MeteoStore {
+    // services
     jsonService: JsonService;
     cookieService: CookieService;
+
     // the model should stay inside the store, all info is exposed via methods
     @observable private modelWeather: ModelWeatherAnswer | null; 
     @observable private modelForecastDay: ModelForecastDayAnswer | null;
@@ -25,6 +27,9 @@ export class MeteoStore {
     private method_weather : string = "data/2.5/weather";
     private method_forecast : string = "data/2.5/forecast";
 
+    private days: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    private months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ];
+
     constructor()
     {
         this.jsonService = new JsonService();
@@ -34,6 +39,7 @@ export class MeteoStore {
         this.modelForecastDay = null;
         this.isMetric = true;
 
+        // once build, try to retrieve the last model store in the cookies
         this.RestoreFromCookies();
     }
 
@@ -44,20 +50,24 @@ export class MeteoStore {
             this.modelWeather = storedWeather;
             this.modelForecastDay = storedForecast;
 
-            //then call to update
+            //then call to update to obtain the latest information, otherwise the last known one stays
             this.LoadInfoByCityName(this.modelWeather.name)
         }
     }
 
-    GetCity = () : string | null => {
-        // TODO: recover cookie
-        return "Tallinn";
-    }
+    //----- SECTION API CALLS and MODELS ---------
 
+    // this verifies that the 2 async calls have recovered the neccessary information
     @computed get isInfoLoaded(): boolean {
         var answer = false;
         if(this.modelWeather !== null && this.modelForecastDay !== null) answer = true;
         return answer;
+    }
+
+    @action UnloadInfo() {
+        console.log(`UnloadInfo()`);
+        this.modelWeather = null;
+        this.modelForecastDay = null;
     }
 
     @action async LoadInfoByCityName(cityName: string) {
@@ -72,7 +82,7 @@ export class MeteoStore {
         {
             var { status, value } = await this.jsonService.fetchAsJson<ModelWeatherAnswer>("GET", methodWeather, undefined, requestObject);
             if (status === 200) {
-                var trimmedMeteo = ModelWeatherAnswer.Trim(value);
+                var trimmedMeteo = ModelWeatherAnswer.Copy(value);
                 this.modelWeather = trimmedMeteo;
                 this.cookieService.setCookie(CookieService.keyMeteo, this.modelWeather);
             }
@@ -81,22 +91,18 @@ export class MeteoStore {
         {
             const { status, value } = await this.jsonService.fetchAsJson<ModelForecastDayAnswer>("GET", methodForecast, undefined, requestObject);
             if (status === 200) {
-                var trimmedForecast = ModelForecastDayAnswer.Trim(value);
+                var trimmedForecast = ModelForecastDayAnswer.Copy(value);
                 this.modelForecastDay = trimmedForecast;
                 this.cookieService.setCookie(CookieService.keyForecast, this.modelForecastDay);
             }
         }
     }
 
+    //----- SECTION utilities -------
+    // various
     get GetUnitsLabel(): string {
         if(this.isMetric) return "ºC";
         return "ºF"
-    }
-
-    @action UnloadInfo() {
-        console.log(`UnloadInfo()`);
-        this.modelWeather = null;
-        this.modelForecastDay = null;
     }
 
     @action SwitchUnits() {
@@ -128,10 +134,11 @@ export class MeteoStore {
         return this.modelWeather.main.temp;
     }
 
-    // Methods for ModelForecastDayAnswer
+    // Methods for extracting data from Models into forecasts
 
-    //the forecast is populated with segments of 3 hours, contaning the following 120 hours (5 days, 40 segments)
-    //for the week forecast we divide the day in 4 pieces, which is 2 segments per piece
+    // the forecast is populated with segments of 3 hours, at a precise hour -> 00h 03h 06h 09h .....
+    // contaning the following 120 hours (5 days, 40 segments)
+    // for the week forecast we divide the day in 4 pieces, which is 2 segments per piece
     // so here we transform the pieces [0] [2] [4] [6]
     @action GetDayForecast(): ModelDayForecast[] {
         var answer: ModelDayForecast[] = [];
@@ -148,6 +155,7 @@ export class MeteoStore {
         return answer;
     }
 
+    // extracting the week daily forecast is easier, we pick the segments at 12h
     @action GetWeekForecast(): ModelDayForecast[] {
         var answer: ModelDayForecast[] = [];
         if(this.modelForecastDay) { // array musnt be null
@@ -162,31 +170,8 @@ export class MeteoStore {
         return answer;
     }
 
-    private ConvertDateToSegmentOfDay(date: string): string {
-        //format is  "2018-09-19 21:00:00"
-        var dateAndHourText = date.split(" ", 2);
-        var hourText = dateAndHourText[1].split(":", 1);
-        var h = Number(hourText[0]);
-        if ( h >= 0 && h < 6 ) return "Night";
-        else if ( h >= 6 && h < 12 ) return "Morning";
-        else if ( h >= 12 && h < 18 ) return "Day";
-        else return "Evening";
-    }
+    // --------- SECTION FONT ICONS ---------
 
-    private ConverToDayName(dateString: string): string {
-        //format is  "2018-09-19 21:00:00"
-        var dateAndHourText = dateString.split(" ", 2);
-        var date = new Date(`${dateAndHourText[0]}T${dateAndHourText[1]}`);
-        return this.ConvertDateToDayName(date);
-    }
-
-    private ConvertDateToDayName(date: Date): string {
-        const days: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-        return days[date.getDay()];
-    }
-
-    
- 
     // this maps the codes from json to our icon less mapping the meteo font icons "weather-icons-map"
     @action getClassFromWeatherCode(weatherCode: string): string{
         switch (weatherCode) {
@@ -212,24 +197,54 @@ export class MeteoStore {
         }
     }
 
-    //date related methods
+    // --------- DATE RELATED METHODS ---------
+
+    // this method converts the date string provided by the API
+    // into the for intra day segments label: Night, Morning, Day, Evening
+    private ConvertDateToSegmentOfDay(date: string): string {
+        //format is  "2018-09-19 21:00:00"
+        var dateAndHourText = date.split(" ", 2);
+        var hourText = dateAndHourText[1].split(":", 1);
+        var h = Number(hourText[0]);
+        if ( h >= 0 && h < 6 ) return "Night";
+        else if ( h >= 6 && h < 12 ) return "Morning";
+        else if ( h >= 12 && h < 18 ) return "Day";
+        else return "Evening";
+    }
+
+    // This method converts the date string provided by the API
+    // And converts it to the day name.
+    private ConverToDayName(dateString: string): string {
+        //format is  "2018-09-19 21:00:00"
+        var dateAndHourText = dateString.split(" ", 2);
+        var date = new Date(`${dateAndHourText[0]}T${dateAndHourText[1]}`);
+        return this.ConvertDateToDayName(date);
+    }
+
+    // extracts day name text from date
+    private ConvertDateToDayName(date: Date): string {
+        return this.days[date.getDay()];
+    }
+
+    // extracts day name text from date
     GetDayOfWeek(): string {
-        const days: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         const date = new Date();
-        return days[date.getDay()];
+        return this.days[date.getDay()];
     }
 
+    // extracts month name text from date
     GetMonthOfYear(): string {
-        var months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ];
         const date = new Date();
-        return months[date.getMonth()]
+        return this.months[date.getMonth()]
     }
 
+    // extracts year name text from date
     GetYear(): string {
         var date = new Date();
         return date.getFullYear().toString();
     }
-
+    
+    // extracts ordinal date text from date
     GetOrdinalDate(): string {
         var date = new Date();
         var dayNumber = date.getDate();

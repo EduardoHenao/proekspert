@@ -1,11 +1,12 @@
 import * as React from "react";
 import { observer, inject } from "mobx-react";
-import { MeteoStore } from "../stores/meteo-store";
+import { MeteoStore } from "../../stores/meteo-store";
 
 export interface DateInfoProps {
     meteoStore?: MeteoStore;
 }
 
+// this class is in charge of displaying the text name and date info in the top of the CityMeteo component.
 @inject("meteoStore")
 @observer
 export class DateInfo extends React.Component<DateInfoProps> {

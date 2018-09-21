@@ -1,5 +1,5 @@
 import * as React from "react";
-import { MeteoStore } from '../stores/meteo-store';
+import { MeteoStore } from '../../stores/meteo-store';
 import { inject, observer } from "mobx-react";
 
 export interface UnitsSwitchProps {

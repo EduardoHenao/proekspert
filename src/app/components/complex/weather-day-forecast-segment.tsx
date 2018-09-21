@@ -1,7 +1,7 @@
 import * as React from "react";
 import { observer, inject } from "mobx-react";
-import { MeteoStore } from "../stores/meteo-store";
-import { Temperature } from "./temperature";
+import { MeteoStore } from "../../stores/meteo-store";
+import { Temperature } from "../basic/temperature";
 
 export interface WeatherDayForecastSegmentProps {
     meteoStore?: MeteoStore;
@@ -9,6 +9,8 @@ export interface WeatherDayForecastSegmentProps {
     temp: number;
 }
 
+// this class represents each of the intra day forecast lines 
+// to the mid right part of the screen
 @inject("meteoStore")
 @observer
 export class WeatherDayForecastSegment extends React.Component<WeatherDayForecastSegmentProps> {

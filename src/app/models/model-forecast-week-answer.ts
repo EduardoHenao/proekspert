@@ -1,3 +1,5 @@
+// this file contains all the subclasses for the API model for week forecast
+
 export class ModelForecastDayMain {
     temp: number;
 
@@ -33,7 +35,11 @@ export class ModelForecastDayAnswer {
         this.list = [];
     }
 
-    static Trim(model: ModelForecastDayAnswer): ModelForecastDayAnswer {
+    // for some reason that I cant fix in another way, typescript matches the api answer to this class,
+    // however the js object in the back is the same, so it preserves ALL the other fields sent from the service.
+    // this is not good when trying to save the model to a cookie due to its size.
+    // so the purpose of this method is actually to create a full copy, with only the required fields.
+    static Copy(model: ModelForecastDayAnswer): ModelForecastDayAnswer {
         var answer = new ModelForecastDayAnswer();
         var counter: number = 0;
 
@@ -51,6 +57,7 @@ export class ModelForecastDayAnswer {
         return answer;
     }
 
+    // utility method to determine if a segment date is at noon
     static IsNoon(dateString: string): boolean {
         //format is  "2018-09-19 21:00:00"
         var dateAndHourText = dateString.split(" ", 2);

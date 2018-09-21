@@ -1,12 +1,13 @@
 import * as React from "react";
 import { observer, inject } from "mobx-react";
-import { MeteoStore } from "../stores/meteo-store";
+import { MeteoStore } from "../../stores/meteo-store";
 import { WeatherDayForecastSegment } from "./weather-day-forecast-segment";
 
 export interface WeatherDayForecastProps {
     meteoStore?: MeteoStore;
 }
 
+// this component maps each day of the intra day forecast into a forecast component
 @inject("meteoStore")
 @observer
 export class WeatherDayForecast extends React.Component<WeatherDayForecastProps> {
