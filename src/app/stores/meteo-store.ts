@@ -2,10 +2,12 @@ import { CookieService } from './../services/cookie-service';
 import { ModelForecastDayAnswer } from './../models/model-forecast-week-answer';
 import { observable, action, computed } from 'mobx';
 import { JsonService } from '../services/json-service';
-import { ModelWeatherRequest } from '../models/model-weather';
+import { ModelWeatherByNameRequest } from '../models/model-weather-by-name-request';
 import { ModelWeatherAnswer } from '../models/model-weather-answer';
 import { ModelDayForecast } from '../models/model-day-forecast';
 import { GeoLocationService } from '../services/geolocation-service';
+import { ModelWeatherBaseRequest } from '../models/model-weather-base-request';
+import { ModelWeatherByGeocoordsRequest } from '../models/model-weather-by-geocoords-request';
 
 export class MeteoStore {
     jsonService: JsonService;
@@ -16,11 +18,12 @@ export class MeteoStore {
     @observable isMetric: boolean;
 
     // url constants
-    // example: 'http://api.openweathermap.org/data/2.5/weather?q=London&appid=c08ebd64eae72d114b42b2cbb8b6aa77';
+    // example:                   'http://api.openweathermap.org/data/2.5/weather?q=London&appid=c08ebd64eae72d114b42b2cbb8b6aa77&units=metric';
+    // example with geo location: 'http://api.openweathermap.org/data/2.5/weather?lat=48.8647&lon=2.3490&appid=c08ebd64eae72d114b42b2cbb8b6aa77&units=metric'
     private baseUrl: string = "https://api.openweathermap.org/";
     private key: string = "c08ebd64eae72d114b42b2cbb8b6aa77";
     private method_weather : string = "data/2.5/weather";
-    private method_forecast_day : string = "data/2.5/forecast";
+    private method_forecast : string = "data/2.5/forecast";
 
     constructor()
     {
@@ -54,9 +57,17 @@ export class MeteoStore {
         return answer;
     }
 
-    @action async LoadInfo (cityName: string) {
+    @action async LoadInfoByCityName(cityName: string) {
+        this.LoadInfo(this.method_weather, this.method_forecast, new ModelWeatherByNameRequest(cityName, this.key));
+    }
+
+    @action async LoadInfoByGeoCoords(lat: string, lon: string) {
+        this.LoadInfo(this.method_weather, this.method_forecast, new ModelWeatherByGeocoordsRequest(lat, lon, this.key));
+    }
+
+    @action async LoadInfo (methodWeather: string, methodForecast: string, requestObject: ModelWeatherBaseRequest) {
         {
-            var { status, value } = await this.jsonService.fetchAsJson<ModelWeatherAnswer>("GET", this.method_weather, undefined, new ModelWeatherRequest(cityName, this.key, "metric"));
+            var { status, value } = await this.jsonService.fetchAsJson<ModelWeatherAnswer>("GET", methodWeather, undefined, requestObject);
             if (status === 200) {
                 var trimmedMeteo = ModelWeatherAnswer.Trim(value);
                 this.modelWeather = trimmedMeteo;
@@ -65,7 +76,7 @@ export class MeteoStore {
         }
 
         {
-            const { status, value } = await this.jsonService.fetchAsJson<ModelForecastDayAnswer>("GET", this.method_forecast_day, undefined, new ModelWeatherRequest(cityName, this.key, "metric"));
+            const { status, value } = await this.jsonService.fetchAsJson<ModelForecastDayAnswer>("GET", methodForecast, undefined, requestObject);
             if (status === 200) {
                 var trimmedForecast = ModelForecastDayAnswer.Trim(value);
                 this.modelForecastDay = trimmedForecast;
@@ -90,9 +101,8 @@ export class MeteoStore {
     }
 
     @action LoadFromGeoCoords() {
-        var geo = new GeoLocationService();
+        var geo = new GeoLocationService(this);
         setInterval(geo.GetLatitude(), 10000);
-        console.log(geo.pos);
     }
 
     //methods for ModelWeatherAnswer

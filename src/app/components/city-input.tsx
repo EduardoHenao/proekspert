@@ -26,7 +26,7 @@ export class CityInput extends React.Component<CityInputProps> {
 
     handleClickIcon = () => {
         if(this.text.length > 0) {
-            this.props.meteoStore!.LoadInfo(this.text);
+            this.props.meteoStore!.LoadInfoByCityName(this.text);
         }
     }
 
