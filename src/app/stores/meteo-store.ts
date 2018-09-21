@@ -43,6 +43,9 @@ export class MeteoStore {
         if (!storedWeather !== undefined && storedForecast !== undefined) {
             this.modelWeather = storedWeather;
             this.modelForecastDay = storedForecast;
+
+            //then call to update
+            this.LoadInfoByCityName(this.modelWeather.name)
         }
     }
 
