@@ -3,11 +3,16 @@ This is an app to show the meteo info based on the openweathermap api.
 
 1st of all, big thanks for exercise, t'was fun.
 
+to start compiling, install node (8.12.0) and yarn (1.9.4)
+the node installer contains the npm (6.4.1) manager
+
 after instancing the git repo go to the root and
+
     yarn install
     yarn build
 
 to launch in an https server 
+
     yarn launch
     go to http://localhost:8080
 
@@ -16,6 +21,7 @@ and then change https to http in meteo-store.ts line 25
     private baseUrl: string = "https://api.openweathermap.org/";
 
 project points:
+
     the api allowed me to obtain (for free) the meteo info
     for the following 5 days, so 7 days was out of reach.
 
