@@ -1,41 +1,35 @@
-meteo app
 
-https://material.io/tools/icons/?icon=search&style=baseline
-https://home.openweathermap.org/api_keys    c08ebd64eae72d114b42b2cbb8b6aa77
-api.openweathermap.org/data/2.5/weather?q=London&appid=c08ebd64eae72d114b42b2cbb8b6aa77
-&units=metric
+This is an app to show the meteo info based on the openweathermap api.
 
-https://openweathermap.org/weather-conditions
-https://openweathermap.org/current
-https://openweathermap.org/forecast5
+1st of all, big thanks for exercise, t'was fun.
 
+after instancing the git repo go to the root and
+    yarn install
+    yarn build
 
-color font
-#dc9785
-#e98
-darksalmon
-hsl(12,55,69)
-rgb(220,151,133)
+to launch in an https server 
+    yarn launch
+    go to http://localhost:8080
 
+if you want to switch to http, change the launch command in package.json by removing the --https from webpack-dev-server
+and then change https to http in meteo-store.ts line 25
+    private baseUrl: string = "https://api.openweathermap.org/";
 
-color background
-#fe8769
-#f87
-salmon
-hsl(12,98,70)
-rgb(254,135,105)
+project points:
+    the api allowed me to obtain (for free) the meteo info
+    for the following 5 days, so 7 days was out of reach.
 
-color font negrilla
-#4f636e
-#567
-dimgray
-hsl(201,16,37)
-rgb(79,99,110)
+    I used, with webpack 4, typescript 3, less for styles, mobx for the stores
+    and js-cookie for cookies manipulation (i store the models in a cookie for later recovery)
 
+    components are split between simpler and complex ones.
+    the less are in a mirrored folder structure to the component folder structure
+    
+    A 3rd folder with components called svg contains (you guessed it!) the svg components.
+    instead of loading a svg file with webpack, i used the react SVG component, and loaded the internal SVG info
+    into the component itself.
 
-color icons + font normal
-#5c656f
-#667
-dimgray
-hsl(211,9,39)
-rgb(92,101,111)
+    the models folder contains the classes to interact with the API,
+    along with the meteo-store and the json-service files.
+
+    in assets, you'll find 2 versions of roboto and the icons font.
